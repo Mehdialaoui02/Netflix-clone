@@ -1,34 +1,36 @@
 import { fetchFromTMDB } from "../services/tmdb.service.js";
+import { User } from "../models/user.model.js";
 
 export async function searchPerson(req, res) {
   const { query } = req.params;
   try {
-    const response = await fetchFromTMDB(`https://api.themoviedb.org/3/search/person?query=${query}&include_adult=false&language=en-US&page=1`);
+    const response = await fetchFromTMDB(
+      `https://api.themoviedb.org/3/search/person?query=${query}&include_adult=false&language=en-US&page=1`
+    );
 
     if (response.results.length === 0) {
-      res.status(404).json({
-        success: false, message: "No results found" 
-      });
+      return res.status(404).send(null);
     }
-    
-    res.status(200).json({
-      success: true, content: response.results 
-    })
-    await User.findById(req.user._id, {
+
+    await User.findByIdAndUpdate(req.user._id, {
       $push: {
         searchHistory: {
           id: response.results[0].id,
           image: response.results[0].profile_path,
           title: response.results[0].name,
           searchType: "person",
-          createdAt : new Date(),
-        }
-      }
+          createdAt: new Date(),
+        },
+      },
+    });
+
+    res.status(200).json({
+      success: true, content: response.results 
     });
   } catch (error) {
-    console.log("Error in searchPerson:", error.message);
+    console.log("Error in searchPerson controller: ", error.message);
     res.status(500).json({
-      success: false, message: "Internal server error" 
+      success: false, message: "Internal Server Error" 
     });
   }
 }
@@ -42,11 +44,12 @@ export async function searchMovie(req, res) {
         success: false, message: "No results found" 
       });
     }
+    console.log("Response" + JSON.stringify(response))
       
     res.status(200).json({
       success: true, content: response.results 
     })
-    await User.findById(req.user._id, {
+    await User.findByIdAndUpdate(req.user._id, {
       $push: {
         searchHistory: {
           id: response.results[0].id,
@@ -77,7 +80,7 @@ export async function searchTvShow(req, res) {
     res.status(200).json({
       success: true, content: response.results 
     })
-    await User.findById(req.user._id, {
+    await User.findByIdAndUpdate(req.user._id, {
       $push: {
         searchHistory: {
           id: response.results[0].id,

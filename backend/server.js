@@ -26,14 +26,12 @@ app.use('/api/v1/movie', protectRoute, movieRoutes)
 app.use('/api/v1/tv', protectRoute, tvRoutes)
 app.use('/api/v1/search', protectRoute, searchRoutes)
 
-if (ENV_VARS.NODE_ENV === "production") {
-  console.log("HEEEY")
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
-  })
-}
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+})
+
 app.listen(PORT, () => {
   connectDB();
 }) 

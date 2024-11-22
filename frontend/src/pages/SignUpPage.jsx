@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuthStore } from "../store/authUser";
 
@@ -8,10 +8,14 @@ const SignUpPage = () => {
     const [password, setPassword] = useState("");
 
 	const { signup } = useAuthStore();
+	const navigate = useNavigate();
 
-    const handleSignUp = (e) => {
+    const handleSignUp = async (e) => {
         e.preventDefault();
-		signup({ email, username, password });
+        const loggedIn = await signup({ email, username, password });
+		if (loggedIn) {
+			navigate(0)
+		}
     }
   return (
     <div className="h-screen w-full hero-bg">

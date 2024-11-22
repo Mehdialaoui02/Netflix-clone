@@ -44,7 +44,6 @@ export async function searchMovie(req, res) {
         success: false, message: "No results found" 
       });
     }
-    console.log("Response" + JSON.stringify(response))
       
     res.status(200).json({
       success: true, content: response.results 

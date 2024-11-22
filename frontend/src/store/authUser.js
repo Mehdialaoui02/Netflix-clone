@@ -1,7 +1,6 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import { create } from "zustand";
-import { Navigate } from "react-router-dom";
 
 export const useAuthStore = create((set) => ({
   user: null,
@@ -17,12 +16,13 @@ export const useAuthStore = create((set) => ({
         user: response.data.user, isSigningUp: false 
       });
       toast.success("Account created successfully");
+      return true
     } catch (error) {
-      console.log(JSON.stringify(error.response))
       toast.error(error.response.data.message || "Signup failed");
       set({
         isSigningUp: false, user: null 
       });
+      return false
     }
   },
   login: async (credentials) => {
@@ -33,11 +33,13 @@ export const useAuthStore = create((set) => ({
         user: response.data.user, isLoggingIn: false 
       });
       toast.success("Logged in successfully");
+      return true
     } catch (error) {
       set({
         isLoggingIn: false, user: null 
       });
       toast.error(error.response.data.message || "Login failed");
+      return false
     }
   },
   logout: async () => {
